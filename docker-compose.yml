@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: payment_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payment_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+
+  payment-service:
+    build:
+      context: ./payment-service-python
+    container_name: payment_service
+    environment:
+      - PORT=8000
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+  api-node:
+    build:
+      context: ./api-node
+    container_name: payment_api
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: payment_db
+      PAYMENT_SERVICE_URL: http://payment-service:8000
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+      - payment-service
+    restart: unless-stopped
+    command: yarn start
+
+volumes:
+  postgres_data:
