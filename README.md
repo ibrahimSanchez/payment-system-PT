@@ -128,3 +128,28 @@ La colección se encuentra en la carpeta `postman`.
 
 - Si `yarn dev` no arranca, verifica que el `.env` tenga los datos correctos y que el servicio Python esté activo.
 - Si hay errores de conexión a PostgreSQL, confirma que `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME` sean correctos.
+
+## Uso con Docker Compose
+
+Desde la raíz del proyecto ejecuta:
+
+```bash
+docker compose up --build
+```
+
+Esto levantará:
+
+- PostgreSQL en `localhost:5432`
+- servicio Python en `localhost:8000`
+- API Node.js en `localhost:3000`
+
+> Si tienes PostgreSQL corriendo localmente en la misma máquina, puede haber un conflicto de puerto en `5432`.
+> En ese caso detén el servicio PostgreSQL local antes de correr el Compose, o bien elimina los contenedores actuales y vuelve a levantar el stack:
+
+```bash
+docker compose down
+# detener postgres local si está activo, por ejemplo `sudo systemctl stop postgresql`
+docker compose up --build
+```
+
+Si sigues teniendo conflicto, revisa que no haya otro proceso usando el puerto `5432`.
