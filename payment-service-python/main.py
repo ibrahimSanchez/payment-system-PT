@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import random
+from starlette.responses import RedirectResponse
 
 app = FastAPI(title="Payment Processor Service")
 
@@ -13,6 +14,10 @@ class PaymentResponse(BaseModel):
     aprobado: bool
     mensaje: str
     codigo: str
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/docs")
 
 @app.get("/health")
 def health_check():

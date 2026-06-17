@@ -1,29 +1,36 @@
-const pool = require('../db/pool');
+const { Usuario, Tarjeta } = require('../models');
+const { validateCardPayload, validateCardUpdatePayload, validateIdParam } = require('../helpers/validation');
 
 // POST /usuarios/:id/tarjetas
 const createCard = async (req, res) => {
   const { id: usuario_id } = req.params;
   const { numero_tarjeta, titular, fecha_vencimiento, tipo } = req.body;
 
-  if (!numero_tarjeta || !titular || !fecha_vencimiento) {
-    return res.status(400).json({ error: 'numero_tarjeta, titular y fecha_vencimiento son requeridos' });
+  const paramErrors = validateIdParam(usuario_id, 'usuario_id');
+  if (paramErrors.length) {
+    return res.status(400).json({ errors: paramErrors });
   }
-  if (numero_tarjeta.length !== 16) {
-    return res.status(400).json({ error: 'El número de tarjeta debe tener 16 dígitos' });
+
+  const errors = validateCardPayload({ numero_tarjeta, titular, fecha_vencimiento, tipo });
+  if (errors.length) {
+    return res.status(400).json({ errors });
   }
 
   try {
-    const user = await pool.query('SELECT id FROM usuarios WHERE id = $1', [usuario_id]);
-    if (user.rows.length === 0) {
+    const user = await Usuario.findByPk(usuario_id);
+    if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const result = await pool.query(
-      `INSERT INTO tarjetas (usuario_id, numero_tarjeta, titular, fecha_vencimiento, tipo)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [usuario_id, numero_tarjeta, titular, fecha_vencimiento, tipo || 'credito']
-    );
-    res.status(201).json(result.rows[0]);
+    const tarjeta = await Tarjeta.create({
+      usuario_id,
+      numero_tarjeta,
+      titular,
+      fecha_vencimiento,
+      tipo: tipo || 'credito',
+    });
+
+    res.status(201).json(tarjeta);
   } catch (err) {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
@@ -32,15 +39,77 @@ const createCard = async (req, res) => {
 // GET /usuarios/:id/tarjetas
 const getUserCards = async (req, res) => {
   const { id: usuario_id } = req.params;
+  const errors = validateIdParam(usuario_id, 'usuario_id');
+  if (errors.length) {
+    return res.status(400).json({ errors });
+  }
+
   try {
-    const result = await pool.query(
-      'SELECT * FROM tarjetas WHERE usuario_id = $1 ORDER BY id',
-      [usuario_id]
-    );
-    res.json(result.rows);
+    const tarjetas = await Tarjeta.findAll({
+      where: { usuario_id },
+      order: [['id', 'ASC']],
+    });
+    res.json(tarjetas);
   } catch (err) {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-module.exports = { createCard, getUserCards };
+// GET /usuarios/:id/tarjetas/:tarjeta_id
+const getUserCardById = async (req, res) => {
+  const { id: usuario_id, tarjeta_id } = req.params;
+  const errors = [
+    ...validateIdParam(usuario_id, 'usuario_id'),
+    ...validateIdParam(tarjeta_id, 'tarjeta_id'),
+  ];
+  if (errors.length) {
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const tarjeta = await Tarjeta.findOne({
+      where: { id: tarjeta_id, usuario_id },
+    });
+    if (!tarjeta) {
+      return res.status(404).json({ error: 'Tarjeta no encontrada' });
+    }
+    res.json(tarjeta);
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// PATCH /usuarios/:id/tarjetas/:tarjeta_id
+const updateUserCardById = async (req, res) => {
+  const { id: usuario_id, tarjeta_id } = req.params;
+  const errors = [
+    ...validateIdParam(usuario_id, 'usuario_id'),
+    ...validateIdParam(tarjeta_id, 'tarjeta_id'),
+    ...validateCardUpdatePayload(req.body),
+  ];
+  if (errors.length) {
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const tarjeta = await Tarjeta.findOne({
+      where: { id: tarjeta_id, usuario_id },
+    });
+    if (!tarjeta) {
+      return res.status(404).json({ error: 'Tarjeta no encontrada' });
+    }
+
+    const updates = {};
+    if (req.body.numero_tarjeta !== undefined) updates.numero_tarjeta = req.body.numero_tarjeta;
+    if (req.body.titular !== undefined) updates.titular = req.body.titular;
+    if (req.body.fecha_vencimiento !== undefined) updates.fecha_vencimiento = req.body.fecha_vencimiento;
+    if (req.body.tipo !== undefined) updates.tipo = req.body.tipo;
+
+    await tarjeta.update(updates);
+    res.json(tarjeta);
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { createCard, getUserCards, getUserCardById, updateUserCardById };

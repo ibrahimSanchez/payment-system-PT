@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS tarjetas (
 -- Tabla de pagos
 CREATE TABLE IF NOT EXISTS pagos (
     id SERIAL PRIMARY KEY,
-    usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
-    tarjeta_id INTEGER NOT NULL REFERENCES tarjetas(id),
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    tarjeta_id INTEGER NOT NULL REFERENCES tarjetas(id) ON DELETE CASCADE,
     monto DECIMAL(10,2) NOT NULL,
     descripcion VARCHAR(255),
     estado VARCHAR(20) NOT NULL DEFAULT 'pendiente', -- aprobado | rechazado

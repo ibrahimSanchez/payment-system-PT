@@ -8,7 +8,7 @@
   },
   "item": [
     {
-      "name": "GET usuarios",
+      "name": "GET Optener Usuarios",
       "request": {
         "method": "GET",
         "header": [],
@@ -32,7 +32,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/usuarios/2",
+          "raw": "http://localhost:3000/usuarios/:id",
           "protocol": "http",
           "host": [
             "localhost"
@@ -40,20 +40,26 @@
           "port": "3000",
           "path": [
             "usuarios",
-            "2"
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            }
           ]
         }
       },
       "response": []
     },
     {
-      "name": "POST usuarios",
+      "name": "POST Crear Usuarios",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Ibrahim Márquez\",\n  \"email\": \"ibra@gmail.com.com\"\n}",
+          "raw": "{\n  \"nombre\": \"Nombre Usuario\",\n  \"email\": \"email@gmail.com\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -75,13 +81,13 @@
       "response": []
     },
     {
-      "name": "POST Registrar tarjeta",
+      "name": "PATCH Modificar Usuario",
       "request": {
-        "method": "POST",
+        "method": "PATCH",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"titular\": \"Ibrahim Márquez\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
+          "raw": "{\n    \"nombre\": \"Nuevo nombre\",\n    \"email\": \"nuevoCorreo@gmail.com\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -89,7 +95,7 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/usuarios/2/tarjetas",
+          "raw": "http://localhost:3000/usuarios/:id",
           "protocol": "http",
           "host": [
             "localhost"
@@ -97,8 +103,39 @@
           "port": "3000",
           "path": [
             "usuarios",
-            "2",
-            "tarjetas"
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE Eliminar un usuario",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/usuarios/:id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            }
           ]
         }
       },
@@ -122,7 +159,7 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/usuarios/2/tarjetas",
+          "raw": "http://localhost:3000/usuarios/:id/tarjetas/:tarjeta_id",
           "protocol": "http",
           "host": [
             "localhost"
@@ -130,8 +167,123 @@
           "port": "3000",
           "path": [
             "usuarios",
-            "2",
+            ":id",
+            "tarjetas",
+            ":tarjeta_id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "2"
+            },
+            {
+              "key": "tarjeta_id",
+              "value": "3"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Registrar tarjeta",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"titular\": \"Nombre Usuario\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios/:id/tarjetas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            ":id",
             "tarjetas"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PATCH Modificar Tarjeta",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"titular\": \"Nombre Usuario\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios/:id/tarjetas/:tarjeta_id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            ":id",
+            "tarjetas",
+            ":tarjeta_id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            },
+            {
+              "key": "tarjeta_id",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Pagos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/usuarios/:id/pagos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            ":id",
+            "pagos"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            }
           ]
         }
       },
@@ -144,7 +296,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"usuario_id\": 2,\n  \"tarjeta_id\": 1,\n  \"monto\": 150.00,\n  \"descripcion\": \"Compra en tienda online\"\n}",
+          "raw": "{\n  \"usuario_id\": 2,\n  \"tarjeta_id\": 2,\n  \"monto\": 150.00,\n  \"descripcion\": \"Compra en tienda online\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -166,21 +318,35 @@
       "response": []
     },
     {
-      "name": "GET Pagos",
+      "name": "PATCH Modificar un pago",
       "request": {
-        "method": "GET",
+        "method": "PATCH",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"rechazado\",\n  \"descripcion\": \"Compra en tienda online\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://localhost:3000/usuarios/2/pagos",
+          "raw": "http://localhost:3000/pagos/:id",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "3000",
           "path": [
-            "usuarios",
-            "2",
-            "pagos"
+            "pagos",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": ""
+            }
           ]
         }
       },

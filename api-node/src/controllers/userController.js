@@ -1,19 +1,52 @@
-const pool = require('../db/pool');
+const { Usuario } = require('../models');
+const { validateUserPayload, validateUserUpdatePayload, validateIdParam } = require('../helpers/validation');
 
 // POST /usuarios
 const createUser = async (req, res) => {
   const { nombre, email } = req.body;
-  if (!nombre || !email) {
-    return res.status(400).json({ error: 'nombre y email son requeridos' });
+  const errors = validateUserPayload({ nombre, email });
+  if (errors.length) {
+    return res.status(400).json({ errors });
   }
+
   try {
-    const result = await pool.query(
-      'INSERT INTO usuarios (nombre, email) VALUES ($1, $2) RETURNING *',
-      [nombre, email]
-    );
-    res.status(201).json(result.rows[0]);
+    const user = await Usuario.create({ nombre, email });
+    res.status(201).json(user);
   } catch (err) {
-    if (err.code === '23505') {
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ error: 'El email ya está registrado' });
+    }
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// PATCH /usuarios/:id
+const updateUserById = async (req, res) => {
+  const { id } = req.params;
+  const idErrors = validateIdParam(id, 'id');
+  if (idErrors.length) {
+    return res.status(400).json({ errors: idErrors });
+  }
+
+  const payloadErrors = validateUserUpdatePayload(req.body);
+  if (payloadErrors.length) {
+    return res.status(400).json({ errors: payloadErrors });
+  }
+
+  try {
+    const user = await Usuario.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const updates = {};
+    if (req.body.nombre !== undefined) updates.nombre = req.body.nombre;
+    if (req.body.email !== undefined) updates.email = req.body.email;
+
+    await user.update(updates);
+    res.json(user);
+  } catch (err) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
       return res.status(409).json({ error: 'El email ya está registrado' });
     }
     res.status(500).json({ error: 'Error interno del servidor' });
@@ -23,8 +56,8 @@ const createUser = async (req, res) => {
 // GET /usuarios
 const getUsers = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM usuarios ORDER BY id');
-    res.json(result.rows);
+    const users = await Usuario.findAll({ order: [['id', 'ASC']] });
+    res.json(users);
   } catch (err) {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
@@ -33,15 +66,41 @@ const getUsers = async (req, res) => {
 // GET /usuarios/:id
 const getUserById = async (req, res) => {
   const { id } = req.params;
+  const errors = validateIdParam(id, 'id');
+  if (errors.length) {
+    return res.status(400).json({ errors });
+  }
+
   try {
-    const result = await pool.query('SELECT * FROM usuarios WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
+    const user = await Usuario.findByPk(id);
+    if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-    res.json(result.rows[0]);
+    res.json(user);
   } catch (err) {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-module.exports = { createUser, getUsers, getUserById };
+// DELETE /usuarios/:id
+const deleteUserById = async (req, res) => {
+  const { id } = req.params;
+  const errors = validateIdParam(id, 'id');
+  if (errors.length) {
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const deletedRows = await Usuario.destroy({
+      where: { id },
+    });
+    if (!deletedRows) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json({ deletedRows });
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { createUser, getUsers, getUserById, updateUserById, deleteUserById };

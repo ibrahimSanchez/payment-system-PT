@@ -1,73 +1,130 @@
 # Sistema de Pagos – API REST
 
-Sistema de pagos con Node.js, PostgreSQL y Python.
+API de pagos construida con Node.js (Express + Sequelize), PostgreSQL y Python (FastAPI).
+
+## Descripción
+
+Este proyecto consiste en un backend para gestionar usuarios, tarjetas y pagos. La API de Node.js expone los endpoints principales y delega el procesamiento de pago a un microservicio Python.
 
 ## Requisitos
 - Node.js 18+
+- Yarn
 - Python 3.10+
 - PostgreSQL 15+
 
+## Estructura del proyecto
+
+- `api-node/`: API principal en Node.js
+- `database/init.sql`: script de inicialización de la base de datos
+- `payment-service-python/`: microservicio de pagos en Python
+- `postman/`: colección de Postman para probar la API
+
 ## Instalación
 
-Desde la raíz de la app:
+Desde la raíz del proyecto:
 
 ### 1. Base de datos
+
 ```bash
 psql -U postgres -c "CREATE DATABASE payment_db;"
 psql -U postgres -d payment_db -f database/init.sql
 ```
-O también se puede crear la BD desde un gestor (pgAdmin) y luego ejecutar el script:
-```
+
+Si prefieres usar un gestor gráfico, crea la base de datos y luego ejecuta:
+
+```bash
 psql -U postgres -d payment_db -f database/init.sql
 ```
 
 ### 2. Servicio Python
+
 ```bash
-cd payment-service
+cd payment-service-python
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --port 8000    # Para correr el servicio de python
+uvicorn main:app --reload --port 8000
 ```
+
+El servicio Python quedará disponible en:
+
+- `http://localhost:8000`
+- Swagger: `http://localhost:8000/docs`
 
 ### 3. API Node.js
 
-Abrir una nueva terminal
+Abre una nueva terminal y ejecuta:
 
 ```bash
 cd api-node
+yarn install
 ```
-Crear el archivo .env con la estructura: 
+
+Crea el archivo `.env` con la siguiente estructura:
 
 ```bash
 PORT=3000
 DB_HOST=localhost
-DB_PORT=5432             # Tu puerto del servidor de base de datos
-DB_USER=postgres         # Tu usuario del servidor de base de datos
-DB_PASSWORD=postgres     # Tu contraseña del servidor de base de datos
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
 DB_NAME=payment_db
 PAYMENT_SERVICE_URL=http://localhost:8000
 ```
 
+Luego inicia la API:
+
 ```bash
-yarn install
-yarn dev          # Para correr la api de node
+yarn dev
 ```
+
+La API Node.js quedará disponible en:
+
+- `http://localhost:3000`
+- Swagger: `http://localhost:3000/docs`
+
+> La ruta `/` redirige automáticamente a `/docs`.
 
 ## Endpoints disponibles
 
-| Método | URL                      | Descripción                    |
-| ------ | ------------------------ | ------------------------------ |
-| POST   | `/usuarios`              | Crear usuario                  |
-| GET    | `/usuarios`              | Listar usuarios                |
-| GET    | `/usuarios/:id`          | Obtener usuario por ID         |
-| POST   | `/usuarios/:id/tarjetas` | Registrar tarjeta              |
-| GET    | `/usuarios/:id/tarjetas` | Listar tarjetas del usuario    |
-| POST   | `/pagos`                 | Crear un pago                  |
-| GET    | `/usuarios/:id/pagos`    | Historial de pagos del usuario |
+| Método | URL                              | Descripción                         |
+| ------ | -------------------------------- | ----------------------------------- |
+| POST   | `/usuarios`                      | Crear usuario                       |
+| GET    | `/usuarios`                      | Listar usuarios                     |
+| GET    | `/usuarios/:id`                  | Obtener usuario por ID              |
+| PATCH  | `/usuarios/:id`                  | Actualizar usuario                  |
+| DELETE | `/usuarios/:id`                  | Eliminar usuario                    |
+| POST   | `/usuarios/:id/tarjetas`         | Registrar tarjeta                   |
+| GET    | `/usuarios/:id/tarjetas`         | Listar tarjetas del usuario         |
+| GET    | `/usuarios/:id/tarjetas/:tarjeta_id` | Obtener tarjeta por ID          |
+| PATCH  | `/usuarios/:id/tarjetas/:tarjeta_id` | Actualizar tarjeta             |
+| POST   | `/pagos`                         | Crear un pago                       |
+| PATCH  | `/pagos/:id`                     | Actualizar pago                     |
+| GET    | `/usuarios/:id/pagos`            | Historial de pagos del usuario      |
+| GET    | `/health`                        | Verificar estado del servicio       |
 
-### Colección de Postman:
+## Swagger / OpenAPI
 
-[Link de la colección](https://sanchezibrahim296-4676428.postman.co/workspace/Ibrahim-S%C3%A1nchez's-Workspace~25a97da2-19e6-4869-8ef5-e3ff0f144487/collection/55968053-3d3e5b39-1b62-4453-8424-9badd41cabaa?action=share&source=copy-link&creator=55968053)
+- Documentación Node.js: `http://localhost:3000/docs`
+- Documentación Python: `http://localhost:8000/docs`
 
-En la carpeta `postman` se encuentra el archivo para importar la colección en caso de que se quiera importar de forma manual
+## Colección de Postman
+
+La colección se encuentra en la carpeta `postman`.
+
+### Importar colección manualmente
+
+1. Abre Postman.
+2. Importa el archivo `postman/PT-API.postman_collection.json`.
+3. Utiliza los endpoints contra `http://localhost:3000`.
+
+## Notas adicionales
+
+- La API Node.js usa Sequelize para acceder a PostgreSQL.
+- El microservicio Python simula la aprobación de pagos con respuesta aleatoria.
+- Las relaciones entre tablas están configuradas para eliminar en cascada cuando se borra un usuario o tarjeta.
+
+## Problemas comunes
+
+- Si `yarn dev` no arranca, verifica que el `.env` tenga los datos correctos y que el servicio Python esté activo.
+- Si hay errores de conexión a PostgreSQL, confirma que `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME` sean correctos.
