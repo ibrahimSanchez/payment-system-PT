@@ -1,0 +1,190 @@
+{
+  "info": {
+    "_postman_id": "3d3e5b39-1b62-4453-8424-9badd41cabaa",
+    "name": "PT-API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55968053",
+    "_collection_link": "https://go.postman.co/collection/55968053-3d3e5b39-1b62-4453-8424-9badd41cabaa?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GET usuarios",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/usuarios",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET usuarios por id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/usuarios/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST usuarios",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ibrahim Márquez\",\n  \"email\": \"ibra@gmail.com.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Registrar tarjeta",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"titular\": \"Ibrahim Márquez\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios/2/tarjetas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            "2",
+            "tarjetas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Listar tarjetas del usuario",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios/2/tarjetas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            "2",
+            "tarjetas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Crear pago",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuario_id\": 2,\n  \"tarjeta_id\": 1,\n  \"monto\": 150.00,\n  \"descripcion\": \"Compra en tienda online\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/pagos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "pagos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Pagos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/usuarios/2/pagos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "usuarios",
+            "2",
+            "pagos"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
