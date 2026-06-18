@@ -43,4 +43,8 @@ const startServer = async () => {
   app.listen(PORT, () => console.log(`API corriendo en http://localhost:${PORT}`));
 };
 
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { app, startServer, sequelize };

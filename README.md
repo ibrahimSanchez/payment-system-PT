@@ -153,3 +153,12 @@ docker compose up --build
 ```
 
 Si sigues teniendo conflicto, revisa que no haya otro proceso usando el puerto `5432`.
+
+## Recomendaciones de mejoras futuras
+
+- Autenticación y autorización: incorporar JWT o sesiones para proteger los endpoints y permitir acciones solo a usuarios autenticados.
+- Encriptación de datos sensibles: cifrar el número de tarjeta y otros datos sensibles en la base de datos.
+- Manejo de errores centralizado: un middleware de manejo de errores para respuestas consistentes y mejores logs.
+- Tests automatizados: añadir pruebas unitarias e integración para los controladores y servicios de pago.
+- Mejoras en el microservicio de pagos: implementar flujos reales de aprobación, reintentos y auditoría de transacciones.
+- Monitoreo y métricas: integrar herramientas de observabilidad para saber el estado del servicio en producción.
