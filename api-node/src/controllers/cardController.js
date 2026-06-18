@@ -4,14 +4,17 @@ const { validateCardPayload, validateCardUpdatePayload, validateIdParam } = requ
 // POST /usuarios/:id/tarjetas
 const createCard = async (req, res) => {
   const { id: usuario_id } = req.params;
-  const { numero_tarjeta, titular, fecha_vencimiento, tipo } = req.body;
+  const { numero_tarjeta, fecha_vencimiento, tipo } = req.body;
 
   const paramErrors = validateIdParam(usuario_id, 'usuario_id');
   if (paramErrors.length) {
     return res.status(400).json({ errors: paramErrors });
   }
 
-  const errors = validateCardPayload({ numero_tarjeta, titular, fecha_vencimiento, tipo });
+  const cleanNumeroTarjeta = typeof numero_tarjeta === 'string' ? numero_tarjeta.trim() : numero_tarjeta;
+  const cleanFechaVencimiento = typeof fecha_vencimiento === 'string' ? fecha_vencimiento.trim() : fecha_vencimiento;
+
+  const errors = validateCardPayload({ numero_tarjeta: cleanNumeroTarjeta, fecha_vencimiento: cleanFechaVencimiento, tipo });
   if (errors.length) {
     return res.status(400).json({ errors });
   }
@@ -22,16 +25,24 @@ const createCard = async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
+    const existingCard = await Tarjeta.findOne({ where: { numero_tarjeta: cleanNumeroTarjeta } });
+    if (existingCard) {
+      return res.status(409).json({ error: 'El número de tarjeta ya existe' });
+    }
+
     const tarjeta = await Tarjeta.create({
       usuario_id,
-      numero_tarjeta,
-      titular,
-      fecha_vencimiento,
-      tipo: tipo || 'credito',
+      numero_tarjeta: cleanNumeroTarjeta,
+      titular: user.nombre,
+      fecha_vencimiento: cleanFechaVencimiento,
+      tipo: tipo ? tipo.toLowerCase() : 'credito',
     });
 
     res.status(201).json(tarjeta);
   } catch (err) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ error: 'El número de tarjeta ya existe' });
+    }
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -100,7 +111,13 @@ const updateUserCardById = async (req, res) => {
     }
 
     const updates = {};
-    if (req.body.numero_tarjeta !== undefined) updates.numero_tarjeta = req.body.numero_tarjeta;
+    if (req.body.numero_tarjeta !== undefined) {
+      const existingCard = await Tarjeta.findOne({ where: { numero_tarjeta: req.body.numero_tarjeta } });
+      if (existingCard && existingCard.id !== tarjeta.id) {
+        return res.status(409).json({ error: 'El número de tarjeta ya existe' });
+      }
+      updates.numero_tarjeta = req.body.numero_tarjeta;
+    }
     if (req.body.titular !== undefined) updates.titular = req.body.titular;
     if (req.body.fecha_vencimiento !== undefined) updates.fecha_vencimiento = req.body.fecha_vencimiento;
     if (req.body.tipo !== undefined) updates.tipo = req.body.tipo;
@@ -108,6 +125,9 @@ const updateUserCardById = async (req, res) => {
     await tarjeta.update(updates);
     res.json(tarjeta);
   } catch (err) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ error: 'El número de tarjeta ya existe' });
+    }
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

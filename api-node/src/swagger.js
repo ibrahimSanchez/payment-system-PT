@@ -87,6 +87,7 @@ module.exports = {
           '200': { description: 'Usuario actualizado' },
           '400': { description: 'Datos inválidos' },
           '404': { description: 'Usuario no encontrado' },
+          '409': { description: 'Email ya registrado' },
         },
       },
       delete: {
@@ -124,11 +125,10 @@ module.exports = {
                 type: 'object',
                 properties: {
                   numero_tarjeta: { type: 'string' },
-                  titular: { type: 'string' },
                   fecha_vencimiento: { type: 'string' },
                   tipo: { type: 'string', enum: ['credito', 'debito'] },
                 },
-                required: ['numero_tarjeta', 'titular', 'fecha_vencimiento'],
+                required: ['numero_tarjeta', 'fecha_vencimiento'],
               },
             },
           },
@@ -137,6 +137,7 @@ module.exports = {
           '201': { description: 'Tarjeta creada' },
           '400': { description: 'Datos inválidos' },
           '404': { description: 'Usuario no encontrado' },
+          '409': { description: 'El número de tarjeta ya existe' },
         },
       },
       get: {
@@ -201,7 +202,6 @@ module.exports = {
                 type: 'object',
                 properties: {
                   numero_tarjeta: { type: 'string' },
-                  titular: { type: 'string' },
                   fecha_vencimiento: { type: 'string' },
                   tipo: { type: 'string', enum: ['credito', 'debito'] },
                 },
@@ -213,6 +213,7 @@ module.exports = {
           '200': { description: 'Tarjeta actualizada' },
           '400': { description: 'Datos inválidos' },
           '404': { description: 'Tarjeta no encontrada' },
+          '409': { description: 'El número de tarjeta ya existe' },
         },
       },
     },
@@ -243,38 +244,38 @@ module.exports = {
         },
       },
     },
-    '/pagos/{id}': {
-      patch: {
-        summary: 'Actualizar pago',
-        parameters: [
-          {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'integer' },
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  descripcion: { type: 'string' },
-                  estado: { type: 'string', enum: ['pendiente', 'aprobado', 'rechazado'] },
-                },
-              },
-            },
-          },
-        },
-        responses: {
-          '200': { description: 'Pago actualizado' },
-          '400': { description: 'Datos inválidos' },
-          '404': { description: 'Pago no encontrado' },
-        },
-      },
-    },
+    // '/pagos/{id}': {
+    //   patch: {
+    //     summary: 'Actualizar pago',
+    //     parameters: [
+    //       {
+    //         name: 'id',
+    //         in: 'path',
+    //         required: true,
+    //         schema: { type: 'integer' },
+    //       },
+    //     ],
+    //     requestBody: {
+    //       required: true,
+    //       content: {
+    //         'application/json': {
+    //           schema: {
+    //             type: 'object',
+    //             properties: {
+    //               descripcion: { type: 'string' },
+    //               estado: { type: 'string', enum: ['pendiente', 'aprobado', 'rechazado'] },
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //     responses: {
+    //       '200': { description: 'Pago actualizado' },
+    //       '400': { description: 'Datos inválidos' },
+    //       '404': { description: 'Pago no encontrado' },
+    //     },
+    //   },
+    // },
     '/usuarios/{id}/pagos': {
       get: {
         summary: 'Listar pagos de un usuario',

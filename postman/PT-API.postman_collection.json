@@ -174,11 +174,11 @@
           "variable": [
             {
               "key": "id",
-              "value": "2"
+              "value": ""
             },
             {
               "key": "tarjeta_id",
-              "value": "3"
+              "value": ""
             }
           ]
         }
@@ -192,7 +192,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"titular\": \"Nombre Usuario\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
+          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -228,7 +228,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"titular\": \"Nombre Usuario\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
+          "raw": "{\n  \"numero_tarjeta\": \"4111111111111111\",\n  \"fecha_vencimiento\": \"12/2027\",\n  \"tipo\": \"credito\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -263,7 +263,7 @@
       "response": []
     },
     {
-      "name": "GET Pagos",
+      "name": "GET Pagos de un usuario",
       "request": {
         "method": "GET",
         "header": [],
@@ -312,41 +312,6 @@
           "port": "3000",
           "path": [
             "pagos"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "PATCH Modificar un pago",
-      "request": {
-        "method": "PATCH",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"estado\": \"rechazado\",\n  \"descripcion\": \"Compra en tienda online\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:3000/pagos/:id",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "pagos",
-            ":id"
-          ],
-          "variable": [
-            {
-              "key": "id",
-              "value": ""
-            }
           ]
         }
       },

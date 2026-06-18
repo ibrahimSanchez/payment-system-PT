@@ -9,8 +9,15 @@ const createUser = async (req, res) => {
     return res.status(400).json({ errors });
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
-    const user = await Usuario.create({ nombre, email });
+    const existingUser = await Usuario.findOne({ where: { email: normalizedEmail } });
+    if (existingUser) {
+      return res.status(409).json({ error: 'El email ya está registrado' });
+    }
+
+    const user = await Usuario.create({ nombre: nombre.trim(), email: normalizedEmail });
     res.status(201).json(user);
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
@@ -40,8 +47,15 @@ const updateUserById = async (req, res) => {
     }
 
     const updates = {};
-    if (req.body.nombre !== undefined) updates.nombre = req.body.nombre;
-    if (req.body.email !== undefined) updates.email = req.body.email;
+    if (req.body.nombre !== undefined) updates.nombre = req.body.nombre.trim();
+    if (req.body.email !== undefined) {
+      const normalizedEmail = req.body.email.trim().toLowerCase();
+      const existingUser = await Usuario.findOne({ where: { email: normalizedEmail } });
+      if (existingUser && existingUser.id !== user.id) {
+        return res.status(409).json({ error: 'El email ya está registrado' });
+      }
+      updates.email = normalizedEmail;
+    }
 
     await user.update(updates);
     res.json(user);

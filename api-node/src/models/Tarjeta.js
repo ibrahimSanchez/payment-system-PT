@@ -13,6 +13,7 @@ module.exports = (sequelize) => sequelize.define('Tarjeta', {
   numero_tarjeta: {
     type: DataTypes.STRING(16),
     allowNull: false,
+    unique: true,
   },
   titular: {
     type: DataTypes.STRING(100),

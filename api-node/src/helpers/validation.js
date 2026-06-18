@@ -148,7 +148,6 @@ const validateUserPayload = ({ nombre, email }) => {
 
 const validateCardPayload = ({
   numero_tarjeta,
-  titular,
   fecha_vencimiento,
   tipo,
 }) => {
@@ -158,14 +157,6 @@ const validateCardPayload = ({
     errors.push('numero_tarjeta es requerido');
   } else if (!isValidCardNumber(numero_tarjeta)) {
     errors.push('numero_tarjeta debe contener exactamente 16 dígitos');
-  }
-
-  if (!isNonEmptyString(titular)) {
-    errors.push('titular es requerido');
-  } else if (!isValidCardHolder(titular)) {
-    errors.push(
-      'titular debe tener entre 2 y 100 caracteres y sólo contener letras, espacios, guiones o apóstrofes'
-    );
   }
 
   if (!isNonEmptyString(fecha_vencimiento)) {

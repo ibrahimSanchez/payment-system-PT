@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE TABLE IF NOT EXISTS tarjetas (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    numero_tarjeta VARCHAR(16) NOT NULL,    -- Solo datos ficticios
+    numero_tarjeta VARCHAR(16) UNIQUE NOT NULL,    -- Solo datos ficticios
     titular VARCHAR(100) NOT NULL,
     fecha_vencimiento VARCHAR(7) NOT NULL,  -- Formato: MM/YYYY
     tipo VARCHAR(20) DEFAULT 'credito',     -- credito | debito
