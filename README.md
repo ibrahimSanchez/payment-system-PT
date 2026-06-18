@@ -99,7 +99,6 @@ La API Node.js quedará disponible en:
 | GET    | `/usuarios/:id/tarjetas/:tarjeta_id` | Obtener tarjeta por ID          |
 | PATCH  | `/usuarios/:id/tarjetas/:tarjeta_id` | Actualizar tarjeta             |
 | POST   | `/pagos`                         | Crear un pago                       |
-| PATCH  | `/pagos/:id`                     | Actualizar pago                     |
 | GET    | `/usuarios/:id/pagos`            | Historial de pagos del usuario      |
 | GET    | `/health`                        | Verificar estado del servicio       |
 

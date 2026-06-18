@@ -87,31 +87,4 @@ const getUserPayments = async (req, res) => {
   }
 };
 
-const updatePaymentById = async (req, res) => {
-  const { id } = req.params;
-  const errors = [
-    ...validateIdParam(id, 'id'),
-    ...validatePaymentUpdatePayload(req.body),
-  ];
-  if (errors.length) {
-    return res.status(400).json({ errors });
-  }
-
-  try {
-    const pago = await Pago.findByPk(id);
-    if (!pago) {
-      return res.status(404).json({ error: 'Pago no encontrado' });
-    }
-
-    const updates = {};
-    if (req.body.descripcion !== undefined) updates.descripcion = req.body.descripcion;
-    if (req.body.estado !== undefined) updates.estado = req.body.estado.toLowerCase();
-
-    await pago.update(updates);
-    res.json(pago);
-  } catch (err) {
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
-
-module.exports = { createPayment, getUserPayments, updatePaymentById };
+module.exports = { createPayment, getUserPayments };
